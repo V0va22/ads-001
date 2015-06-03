@@ -8,8 +8,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 public class Discnt {
-    private static Integer leftIndex = 0;
-    private static Integer rightIndex = 1000;
+
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2){
@@ -21,21 +20,31 @@ public class Discnt {
         Integer discount = Integer.parseInt(lines.get(1));
 
         BigDecimal total = new BigDecimal(0);
-
-        while (leftIndex < rightIndex) {
-            for (int i = 0 ; i<2; i++) {
-                Integer price = getLeftPrice(prices);
-                if (leftIndex >= rightIndex){
-                    break;
+        Integer leftIndex = 0;
+        Integer rightIndex = 1000;
+        int purchase = 0;
+        while (leftIndex <= rightIndex){
+            if (purchase < 2){
+                if (prices[leftIndex] > 0 ){
+                    total = total.add(new BigDecimal(leftIndex));
+                    purchase++;
+                    prices[leftIndex]--;
                 }
-                total = total.add(new BigDecimal(price));
+                if (prices[leftIndex] == 0){
+                    leftIndex++;
+                }
+
+            } else {
+                if (prices[rightIndex] > 0 ){
+                    total = total.add(new BigDecimal(rightIndex).multiply(new BigDecimal(100 - discount).divide(new BigDecimal(100), 10, BigDecimal.ROUND_HALF_UP)));
+                    purchase = 0;
+                    prices[rightIndex]--;
+                }
+                if (prices[rightIndex] == 0){
+                    rightIndex--;
+                }
 
             }
-            Integer price = getRightPrice(prices);
-            if (leftIndex >= rightIndex){
-                break;
-            }
-            total = total.add(new BigDecimal(price).multiply(new BigDecimal(100 - discount).divide(new BigDecimal(100), 10, BigDecimal.ROUND_HALF_UP)));
         }
 
         DecimalFormat df = new DecimalFormat();
@@ -43,23 +52,6 @@ public class Discnt {
         df.setMinimumFractionDigits(2);
         df.setGroupingUsed(false);
         Files.write(new File(args[1]).toPath(), df.format(total).getBytes());
-    }
-
-    private static Integer getRightPrice(int[] prices) {
-        if (prices[rightIndex] > 0){
-            return rightIndex--;
-        } else {
-            rightIndex--;
-            return getRightPrice(prices);
-        }
-    }
-    private static Integer getLeftPrice(int[] prices) {
-        if (prices[leftIndex] > 0){
-            return leftIndex++;
-        } else {
-            leftIndex++;
-            return getLeftPrice(prices);
-        }
     }
 
     private static int[] countPrices(String s) {
