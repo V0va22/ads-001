@@ -8,11 +8,11 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Ingpok {
+public class Lngpok {
 
     public static void main(String[] args) throws IOException {
         if (args.length < 2){
-            args = new String[]{"ingpok.in", "ingpok.out"};
+            args = new String[]{"lngpok.in", "lngpok.out"};
         }
         Integer jokerCounter = 0;
         Set<Integer> cards = new TreeSet<>((a,b) -> a-b);
